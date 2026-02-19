@@ -1,0 +1,19 @@
+appId: com.cc-setter
+productName: Claude Code Settings Editor
+directories:
+  buildResources: resources
+  output: dist
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!electron.vite.config.*'
+  - '!{.eslintrc,.prettierrc,tsconfig*.json,components.json,vite.config.ts}'
+  - '!{PRD.md,tech.md}'
+mac:
+  target:
+    - dmg
+    - zip
+  category: public.app-category.developer-tools
+  hardenedRuntime: true
+  artifactName: ${name}-${version}-${arch}.${ext}
+npmRebuild: false
