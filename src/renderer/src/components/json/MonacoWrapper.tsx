@@ -2,6 +2,7 @@ import { useRef, useCallback } from 'react'
 import Editor, { type OnMount, type OnChange } from '@monaco-editor/react'
 import type { editor } from 'monaco-editor'
 import { useEditorStore, type FileTarget } from '@/stores/editor-store'
+import { useThemeStore } from '@/stores/theme-store'
 
 const FILE_URI_MAP: Record<FileTarget, string> = {
   settings: 'settings.json',
@@ -12,6 +13,7 @@ export function MonacoWrapper(): React.JSX.Element {
   const raw = useEditorStore((s) => s.raw)
   const activeFile = useEditorStore((s) => s.activeFile)
   const updateRaw = useEditorStore((s) => s.updateRaw)
+  const theme = useThemeStore((s) => s.theme)
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
 
   const handleMount: OnMount = useCallback((editor) => {
@@ -32,7 +34,7 @@ export function MonacoWrapper(): React.JSX.Element {
     <Editor
       height="100%"
       language="json"
-      theme="vs-dark"
+      theme={theme === 'light' ? 'vs' : 'vs-dark'}
       path={FILE_URI_MAP[activeFile]}
       value={raw}
       onMount={handleMount}

@@ -11,6 +11,7 @@ declare global {
       getMcpSchema: () => Promise<unknown>
       detectVersion: () => Promise<VersionInfo>
       setDirtyState: (isDirty: boolean) => void
+      getFilePaths: () => Promise<{ settings: string; mcp: string }>
     }
   }
 }

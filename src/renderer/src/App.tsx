@@ -1,7 +1,9 @@
 import { useEffect, useRef, useCallback, useMemo } from 'react'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { BottomBar } from '@/components/layout/BottomBar'
+import { ViewToggle } from '@/components/layout/ViewToggle'
 import { MonacoWrapper } from '@/components/json/MonacoWrapper'
+import { FormView } from '@/components/form/FormView'
 import { ToastContainer } from '@/components/layout/ToastContainer'
 import { useEditorStore } from '@/stores/editor-store'
 import { useVersionStore } from '@/stores/version-store'
@@ -15,6 +17,7 @@ function App(): React.JSX.Element {
   const loadFile = useEditorStore((s) => s.loadFile)
   const isLoading = useEditorStore((s) => s.isLoading)
   const activeFile = useEditorStore((s) => s.activeFile)
+  const activeView = useEditorStore((s) => s.activeView)
   const raw = useEditorStore((s) => s.raw)
   const isDirty = useEditorStore((s) => s.isDirty)
   const detectVersion = useVersionStore((s) => s.detect)
@@ -66,16 +69,22 @@ function App(): React.JSX.Element {
     runValidation(raw, activeFile)
   }, [raw, activeFile, runValidation])
 
+  const showForm = activeView === 'form'
+
   return (
     <div className="flex h-screen w-screen overflow-hidden">
       <Sidebar />
 
       <main className="flex flex-1 flex-col">
+        <ViewToggle />
+
         <div className="flex-1 overflow-hidden">
           {isLoading ? (
             <div className="flex h-full items-center justify-center">
               <p className="text-sm text-zinc-500">Loading...</p>
             </div>
+          ) : showForm ? (
+            <FormView />
           ) : (
             <MonacoWrapper />
           )}

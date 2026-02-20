@@ -7,7 +7,8 @@ const api = {
   getSettingsSchema: () => ipcRenderer.invoke('schema:get-settings'),
   getMcpSchema: () => ipcRenderer.invoke('schema:get-mcp'),
   detectVersion: () => ipcRenderer.invoke('version:detect'),
-  setDirtyState: (isDirty: boolean) => ipcRenderer.send('dirty-state', isDirty)
+  setDirtyState: (isDirty: boolean) => ipcRenderer.send('dirty-state', isDirty),
+  getFilePaths: () => ipcRenderer.invoke('paths:get')
 }
 
 if (process.contextIsolated) {

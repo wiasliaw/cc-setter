@@ -2,6 +2,7 @@ import { ipcMain } from 'electron'
 import { FileService } from './services/file-service'
 import { SchemaService } from './services/schema-service'
 import { VersionDetectService } from './services/version-service'
+import { USER_SETTINGS_PATH, USER_MCP_PATH } from '@shared/constants'
 
 const fileService = new FileService()
 const schemaService = new SchemaService()
@@ -26,5 +27,9 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle('version:detect', () => {
     return versionService.detect()
+  })
+
+  ipcMain.handle('paths:get', () => {
+    return { settings: USER_SETTINGS_PATH, mcp: USER_MCP_PATH }
   })
 }

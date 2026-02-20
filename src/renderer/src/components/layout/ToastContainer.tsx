@@ -2,9 +2,15 @@ import { useToastStore } from '@/stores/toast-store'
 import { cn } from '@/lib/utils'
 
 const typeStyles = {
-  success: 'border-emerald-800 bg-emerald-950 text-emerald-300',
-  error: 'border-red-800 bg-red-950 text-red-300',
-  info: 'border-zinc-700 bg-zinc-900 text-zinc-300'
+  success: 'border-zinc-700 bg-zinc-900 text-zinc-200',
+  error: 'border-zinc-700 bg-zinc-900 text-zinc-200',
+  info: 'border-zinc-700 bg-zinc-900 text-zinc-200'
+}
+
+const typePrefixes = {
+  success: '✓ ',
+  error: '✗ ',
+  info: ''
 }
 
 export function ToastContainer(): React.JSX.Element {
@@ -24,7 +30,7 @@ export function ToastContainer(): React.JSX.Element {
             typeStyles[toast.type]
           )}
         >
-          {toast.message}
+          {typePrefixes[toast.type]}{toast.message}
         </button>
       ))}
     </div>
