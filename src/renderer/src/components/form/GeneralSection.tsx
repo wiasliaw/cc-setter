@@ -1,10 +1,28 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useEditorStore } from '@/stores/editor-store'
+import { useVersionStore } from '@/stores/version-store'
 import { GenericFieldRenderer } from '@/components/fields/GenericFieldRenderer'
 import { getDeprecation } from '@shared/deprecated-fields'
 import type { FieldConfig } from '@/components/fields/types'
 
-const GENERAL_FIELDS: FieldConfig[] = [
+function useGeneralFields(): FieldConfig[] {
+  const version = useVersionStore((s) => s.version)
+  return useMemo(() => buildGeneralFields(version), [version])
+}
+
+function buildGeneralFields(version: string | null): FieldConfig[] {
+  return GENERAL_FIELDS_BASE.map((f) => {
+    if (!f.deprecationKey) return f
+    const dep = getDeprecation(f.deprecationKey, version)
+    return dep ? { ...f, deprecated: dep } : f
+  })
+}
+
+interface GeneralFieldBase extends FieldConfig {
+  deprecationKey?: string
+}
+
+const GENERAL_FIELDS_BASE: GeneralFieldBase[] = [
   {
     key: 'language',
     label: 'Language',
@@ -100,7 +118,8 @@ const GENERAL_FIELDS: FieldConfig[] = [
   {
     key: 'prefersReducedMotion',
     label: 'Reduce Motion',
-    description: 'Reduce or disable UI animations (spinners, shimmer, flash effects) for accessibility.',
+    description:
+      'Reduce or disable UI animations (spinners, shimmer, flash effects) for accessibility.',
     type: 'boolean',
     defaultValue: false
   },
@@ -111,7 +130,7 @@ const GENERAL_FIELDS: FieldConfig[] = [
       'Whether to include the co-authored-by Claude byline in git commits and pull requests.',
     type: 'boolean',
     defaultValue: true,
-    deprecated: getDeprecation('includeCoAuthoredBy')
+    deprecationKey: 'includeCoAuthoredBy'
   }
 ]
 
@@ -119,22 +138,20 @@ export function GeneralSection(): React.JSX.Element {
   const parsed = useEditorStore((s) => s.parsed)
   const updateField = useEditorStore((s) => s.updateField)
   const removeField = useEditorStore((s) => s.removeField)
+  const fields = useGeneralFields()
 
   const handleUpdate = useCallback(
     (key: string, value: unknown) => updateField([key], value),
     [updateField]
   )
 
-  const handleRemove = useCallback(
-    (key: string) => removeField([key]),
-    [removeField]
-  )
+  const handleRemove = useCallback((key: string) => removeField([key]), [removeField])
 
   return (
     <section>
       <h2 className="mb-4 text-sm font-semibold tracking-wide text-zinc-400">General</h2>
       <div className="flex flex-col gap-2">
-        {GENERAL_FIELDS.map((config) => (
+        {fields.map((config) => (
           <GenericFieldRenderer
             key={config.key}
             config={config}

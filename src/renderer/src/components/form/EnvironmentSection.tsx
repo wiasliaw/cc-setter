@@ -20,6 +20,50 @@ interface KnownCategory {
 }
 
 const KNOWN_CATEGORIES: KnownCategory[] = [
+  // ── API & Authentication ──────────────────────────────────────────────
+  {
+    id: 'api-auth',
+    label: 'API & Authentication',
+    vars: [
+      {
+        key: 'ANTHROPIC_API_KEY',
+        label: 'API key',
+        description:
+          'Primary API key for Anthropic. Caution: settings.json may be committed to version control.',
+        type: 'string',
+        placeholder: 'sk-ant-...'
+      },
+      {
+        key: 'ANTHROPIC_AUTH_TOKEN',
+        label: 'Auth token',
+        description: 'Alternative authentication token for Anthropic services.',
+        type: 'string',
+        placeholder: 'Bearer token'
+      },
+      {
+        key: 'ANTHROPIC_BASE_URL',
+        label: 'Base URL',
+        description: 'Custom base URL for Anthropic API endpoints (proxies, on-prem).',
+        type: 'string',
+        placeholder: 'https://api.anthropic.com'
+      },
+      {
+        key: 'ANTHROPIC_CUSTOM_HEADERS',
+        label: 'Custom headers (JSON)',
+        description: 'Additional HTTP headers for Anthropic API requests in JSON format.',
+        type: 'string',
+        placeholder: '{"X-Custom-Header":"value"}'
+      },
+      {
+        key: 'ANTHROPIC_BETAS',
+        label: 'Beta features',
+        description: 'Comma-separated list of beta feature flags to enable.',
+        type: 'string',
+        placeholder: 'feature-a,feature-b'
+      }
+    ]
+  },
+  // ── Model ─────────────────────────────────────────────────────────────
   {
     id: 'model',
     label: 'Model',
@@ -33,13 +77,218 @@ const KNOWN_CATEGORIES: KnownCategory[] = [
       },
       {
         key: 'ANTHROPIC_SMALL_FAST_MODEL',
-        label: 'Small / fast model',
-        description: 'Override the model used for lightweight background tasks.',
+        label: 'Small / fast model (deprecated)',
+        description:
+          'Override the model for lightweight background tasks. Deprecated — use ANTHROPIC_DEFAULT_HAIKU_MODEL instead.',
         type: 'string',
         placeholder: 'claude-haiku-3-5-latest'
+      },
+      {
+        key: 'ANTHROPIC_DEFAULT_OPUS_MODEL',
+        label: 'Default Opus model',
+        description:
+          'Pin the model used for the "opus" alias and "opusplan" in Plan Mode. Use full model names.',
+        type: 'string',
+        placeholder: 'claude-opus-4-6'
+      },
+      {
+        key: 'ANTHROPIC_DEFAULT_SONNET_MODEL',
+        label: 'Default Sonnet model',
+        description: 'Pin the model used for the "sonnet" alias and "opusplan" in execution mode.',
+        type: 'string',
+        placeholder: 'claude-sonnet-4-6'
+      },
+      {
+        key: 'ANTHROPIC_DEFAULT_HAIKU_MODEL',
+        label: 'Default Haiku model',
+        description: 'Pin the model used for the "haiku" alias and background functionality.',
+        type: 'string',
+        placeholder: 'claude-haiku-3-5-latest'
+      },
+      {
+        key: 'CLAUDE_CODE_SUBAGENT_MODEL',
+        label: 'Subagent model',
+        description: 'Override the model used for subagent operations.',
+        type: 'string',
+        placeholder: 'claude-sonnet-4-6'
       }
     ]
   },
+  // ── Output & Tokens ───────────────────────────────────────────────────
+  {
+    id: 'output-tokens',
+    label: 'Output & Tokens',
+    vars: [
+      {
+        key: 'CLAUDE_CODE_MAX_OUTPUT_TOKENS',
+        label: 'Max output tokens',
+        description: 'Maximum number of output tokens per response.',
+        type: 'number-string',
+        placeholder: '16384'
+      },
+      {
+        key: 'MAX_THINKING_TOKENS',
+        label: 'Max thinking tokens',
+        description: 'Maximum tokens allocated for model thinking/reasoning steps.',
+        type: 'number-string',
+        placeholder: '10000'
+      },
+      {
+        key: 'MAX_MCP_OUTPUT_TOKENS',
+        label: 'Max MCP output tokens',
+        description: 'Maximum tokens for MCP server tool outputs.',
+        type: 'number-string',
+        placeholder: '25000'
+      },
+      {
+        key: 'CLAUDE_CODE_MAX_RETRIES',
+        label: 'Max retries',
+        description: 'Maximum number of API request retries on failure.',
+        type: 'number-string',
+        placeholder: '3'
+      },
+      {
+        key: 'API_TIMEOUT_MS',
+        label: 'API timeout (ms)',
+        description: 'Timeout for API requests in milliseconds.',
+        type: 'number-string',
+        placeholder: '60000'
+      },
+      {
+        key: 'CLAUDE_CODE_API_KEY_HELPER_TTL_MS',
+        label: 'API key helper TTL (ms)',
+        description: 'Time-to-live for the API key helper cache in milliseconds.',
+        type: 'number-string',
+        placeholder: '3600000'
+      }
+    ]
+  },
+  // ── Behavior & Feature Flags ──────────────────────────────────────────
+  {
+    id: 'behavior',
+    label: 'Behavior & Feature Flags',
+    vars: [
+      {
+        key: 'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC',
+        label: 'Disable non-essential traffic',
+        description:
+          'Reduce non-critical network requests (update checks, telemetry, tips). Set to "1" to enable.',
+        type: 'flag'
+      },
+      {
+        key: 'CLAUDE_CODE_DISABLE_TERMINAL_TITLE',
+        label: 'Disable terminal title',
+        description: 'Prevent Claude Code from updating the terminal window title.',
+        type: 'flag'
+      },
+      {
+        key: 'ENABLE_TOOL_SEARCH',
+        label: 'Enable tool search',
+        description: 'Enable the ToolSearch tool for discovering available tools.',
+        type: 'enum',
+        enumValues: ['true', 'false']
+      },
+      {
+        key: 'DISABLE_AUTOUPDATER',
+        label: 'Disable auto-updater',
+        description: 'Prevent Claude Code from checking for and installing updates.',
+        type: 'flag'
+      },
+      {
+        key: 'DISABLE_COST_WARNINGS',
+        label: 'Disable cost warnings',
+        description: 'Suppress API cost warning messages.',
+        type: 'flag'
+      },
+      {
+        key: 'DISABLE_ERROR_REPORTING',
+        label: 'Disable error reporting',
+        description: 'Disable automatic error reporting to Anthropic.',
+        type: 'flag'
+      },
+      {
+        key: 'DISABLE_TELEMETRY',
+        label: 'Disable telemetry',
+        description: 'Disable all telemetry collection.',
+        type: 'flag'
+      },
+      {
+        key: 'DISABLE_INTERLEAVED_THINKING',
+        label: 'Disable interleaved thinking',
+        description:
+          'Disable interleaved thinking mode. Thinking will not be interspersed with responses.',
+        type: 'flag'
+      },
+      {
+        key: 'CLAUDE_CODE_DISABLE_COMMAND_INJECTION_CHECK',
+        label: 'Disable command injection check',
+        description: 'Disable the command injection security check for bash commands.',
+        type: 'flag'
+      },
+      {
+        key: 'CLAUDE_CODE_DONT_INHERIT_ENV',
+        label: "Don't inherit env",
+        description:
+          'Prevent Claude Code from inheriting environment variables from the parent shell.',
+        type: 'flag'
+      },
+      {
+        key: 'CLAUDE_CODE_EXTRA_BODY',
+        label: 'Extra request body (JSON)',
+        description: 'Additional JSON data merged into every API request body.',
+        type: 'string',
+        placeholder: '{"metadata":{"user_id":"123"}}'
+      },
+      {
+        key: 'CLAUDE_CODE_SHELL_PREFIX',
+        label: 'Shell prefix',
+        description: 'Prefix prepended to all shell commands executed by Claude.',
+        type: 'string',
+        placeholder: 'bash -c'
+      },
+      {
+        key: 'CLAUDE_CODE_EFFORT_LEVEL',
+        label: 'Effort level',
+        description:
+          'Control Opus 4.6 adaptive reasoning effort. Lower = faster & cheaper, higher = deeper reasoning.',
+        type: 'enum',
+        enumValues: ['low', 'medium', 'high']
+      }
+    ]
+  },
+  // ── Prompt Caching ────────────────────────────────────────────────────
+  {
+    id: 'prompt-caching',
+    label: 'Prompt Caching',
+    vars: [
+      {
+        key: 'DISABLE_PROMPT_CACHING',
+        label: 'Disable all prompt caching',
+        description:
+          'Disable prompt caching for all models. Takes precedence over per-model settings.',
+        type: 'flag'
+      },
+      {
+        key: 'DISABLE_PROMPT_CACHING_OPUS',
+        label: 'Disable caching (Opus)',
+        description: 'Disable prompt caching for Opus models only.',
+        type: 'flag'
+      },
+      {
+        key: 'DISABLE_PROMPT_CACHING_SONNET',
+        label: 'Disable caching (Sonnet)',
+        description: 'Disable prompt caching for Sonnet models only.',
+        type: 'flag'
+      },
+      {
+        key: 'DISABLE_PROMPT_CACHING_HAIKU',
+        label: 'Disable caching (Haiku)',
+        description: 'Disable prompt caching for Haiku models only.',
+        type: 'flag'
+      }
+    ]
+  },
+  // ── Agent Teams (Experimental) ────────────────────────────────────────
   {
     id: 'agent-teams',
     label: 'Agent Teams (Experimental)',
@@ -53,6 +302,219 @@ const KNOWN_CATEGORIES: KnownCategory[] = [
       }
     ]
   },
+  // ── Bash Execution ────────────────────────────────────────────────────
+  {
+    id: 'bash',
+    label: 'Bash Execution',
+    vars: [
+      {
+        key: 'BASH_DEFAULT_TIMEOUT_MS',
+        label: 'Default timeout (ms)',
+        description: 'Default timeout for bash command execution in milliseconds.',
+        type: 'number-string',
+        placeholder: '120000'
+      },
+      {
+        key: 'BASH_MAX_TIMEOUT_MS',
+        label: 'Max timeout (ms)',
+        description: 'Maximum timeout allowed for bash commands in milliseconds.',
+        type: 'number-string',
+        placeholder: '600000'
+      },
+      {
+        key: 'BASH_MAX_OUTPUT_LENGTH',
+        label: 'Max output length',
+        description: 'Maximum character length of bash command output before truncation.',
+        type: 'number-string',
+        placeholder: '30000'
+      },
+      {
+        key: 'CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR',
+        label: 'Maintain project working dir',
+        description: 'Force all bash commands to execute in the project directory for consistency.',
+        type: 'flag'
+      }
+    ]
+  },
+  // ── MCP (Model Context Protocol) ──────────────────────────────────────
+  {
+    id: 'mcp',
+    label: 'MCP (Model Context Protocol)',
+    vars: [
+      {
+        key: 'MCP_TIMEOUT',
+        label: 'General timeout (ms)',
+        description: 'Timeout for MCP operations in milliseconds.',
+        type: 'number-string',
+        placeholder: '30000'
+      },
+      {
+        key: 'MCP_TOOL_TIMEOUT',
+        label: 'Tool timeout (ms)',
+        description: 'Timeout specifically for MCP tool execution in milliseconds.',
+        type: 'number-string',
+        placeholder: '60000'
+      },
+      {
+        key: 'MCP_SERVER_CONNECTION_BATCH_SIZE',
+        label: 'Connection batch size',
+        description: 'Number of MCP servers to connect to concurrently during startup.',
+        type: 'number-string',
+        placeholder: '5'
+      },
+      {
+        key: 'MCP_OAUTH_CALLBACK_PORT',
+        label: 'OAuth callback port',
+        description: 'Port for OAuth callback when authenticating with MCP servers.',
+        type: 'number-string',
+        placeholder: '3000'
+      }
+    ]
+  },
+  // ── AWS Bedrock ───────────────────────────────────────────────────────
+  {
+    id: 'bedrock',
+    label: 'AWS Bedrock',
+    vars: [
+      {
+        key: 'CLAUDE_CODE_USE_BEDROCK',
+        label: 'Use Bedrock',
+        description: 'Route API requests through AWS Bedrock instead of the direct Anthropic API.',
+        type: 'flag'
+      },
+      {
+        key: 'BEDROCK_BASE_URL',
+        label: 'Bedrock base URL',
+        description: 'Custom base URL for AWS Bedrock API endpoint.',
+        type: 'string',
+        placeholder: 'https://bedrock-runtime.us-east-1.amazonaws.com'
+      },
+      {
+        key: 'AWS_REGION',
+        label: 'AWS region',
+        description: 'AWS region for Bedrock service calls.',
+        type: 'string',
+        placeholder: 'us-east-1'
+      },
+      {
+        key: 'AWS_PROFILE',
+        label: 'AWS profile',
+        description: 'AWS profile name for credential selection from ~/.aws/credentials.',
+        type: 'string',
+        placeholder: 'default'
+      },
+      {
+        key: 'ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION',
+        label: 'Small/fast model region',
+        description: 'AWS region for the small fast model when using Bedrock.',
+        type: 'string',
+        placeholder: 'us-west-2'
+      },
+      {
+        key: 'CLAUDE_CODE_SKIP_BEDROCK_AUTH',
+        label: 'Skip Bedrock auth',
+        description: 'Skip AWS Bedrock authentication (for custom auth setups).',
+        type: 'flag'
+      }
+    ]
+  },
+  // ── Google Vertex AI ──────────────────────────────────────────────────
+  {
+    id: 'vertex',
+    label: 'Google Vertex AI',
+    vars: [
+      {
+        key: 'CLAUDE_CODE_USE_VERTEX',
+        label: 'Use Vertex AI',
+        description: 'Route API requests through Google Vertex AI.',
+        type: 'flag'
+      },
+      {
+        key: 'ANTHROPIC_VERTEX_PROJECT_ID',
+        label: 'GCP project ID',
+        description: 'Google Cloud project ID for Vertex AI integration.',
+        type: 'string',
+        placeholder: 'my-gcp-project'
+      },
+      {
+        key: 'CLOUD_ML_REGION',
+        label: 'Cloud ML region',
+        description: 'Google Cloud ML region for Vertex AI.',
+        type: 'string',
+        placeholder: 'us-central1'
+      },
+      {
+        key: 'VERTEX_BASE_URL',
+        label: 'Vertex base URL',
+        description: 'Custom base URL for Google Vertex AI API.',
+        type: 'string',
+        placeholder: 'https://us-central1-aiplatform.googleapis.com'
+      },
+      {
+        key: 'CLAUDE_CODE_SKIP_VERTEX_AUTH',
+        label: 'Skip Vertex auth',
+        description: 'Skip Google Vertex AI authentication.',
+        type: 'flag'
+      }
+    ]
+  },
+  // ── Network & TLS ─────────────────────────────────────────────────────
+  {
+    id: 'network',
+    label: 'Network & TLS',
+    vars: [
+      {
+        key: 'HTTP_PROXY',
+        label: 'HTTP proxy',
+        description: 'HTTP proxy server URL for outgoing requests.',
+        type: 'string',
+        placeholder: 'http://proxy.example.com:8080'
+      },
+      {
+        key: 'HTTPS_PROXY',
+        label: 'HTTPS proxy',
+        description: 'HTTPS proxy server URL for outgoing requests.',
+        type: 'string',
+        placeholder: 'http://proxy.example.com:8080'
+      },
+      {
+        key: 'NO_PROXY',
+        label: 'No proxy domains',
+        description: 'Comma-separated domains that bypass the proxy.',
+        type: 'string',
+        placeholder: 'localhost,127.0.0.1,.internal.com'
+      },
+      {
+        key: 'NODE_EXTRA_CA_CERTS',
+        label: 'Extra CA certificates',
+        description: 'Path to additional CA certificates file for TLS verification.',
+        type: 'string',
+        placeholder: '/etc/ssl/certs/custom-ca.pem'
+      },
+      {
+        key: 'CLAUDE_CODE_CLIENT_CERT',
+        label: 'Client certificate',
+        description: 'Path to client TLS certificate for mutual TLS authentication.',
+        type: 'string',
+        placeholder: '/path/to/client.crt'
+      },
+      {
+        key: 'CLAUDE_CODE_CLIENT_KEY',
+        label: 'Client key',
+        description: 'Path to client TLS private key.',
+        type: 'string',
+        placeholder: '/path/to/client.key'
+      },
+      {
+        key: 'CLAUDE_CODE_CLIENT_KEY_PASSPHRASE',
+        label: 'Client key passphrase',
+        description: 'Passphrase for the encrypted client private key.',
+        type: 'string',
+        placeholder: ''
+      }
+    ]
+  },
+  // ── Telemetry (OpenTelemetry) ─────────────────────────────────────────
   {
     id: 'telemetry',
     label: 'Telemetry (OpenTelemetry)',
@@ -60,7 +522,8 @@ const KNOWN_CATEGORIES: KnownCategory[] = [
       {
         key: 'CLAUDE_CODE_ENABLE_TELEMETRY',
         label: 'Enable telemetry',
-        description: 'Enable OpenTelemetry metric and event export. Required for all OTel settings.',
+        description:
+          'Enable OpenTelemetry metric and event export. Required for all OTel settings.',
         type: 'flag'
       },
       {
@@ -162,6 +625,13 @@ const KNOWN_CATEGORIES: KnownCategory[] = [
           'How often the otelHeadersHelper script runs to refresh dynamic auth tokens. Default: 1740000 (29 min).',
         type: 'number-string',
         placeholder: '1740000'
+      },
+      {
+        key: 'CLAUDE_CODE_OTEL_SHUTDOWN_TIMEOUT_MS',
+        label: 'OTel shutdown timeout (ms)',
+        description: 'Timeout for OpenTelemetry graceful shutdown in milliseconds.',
+        type: 'number-string',
+        placeholder: '5000'
       }
     ]
   }
@@ -305,13 +775,7 @@ function CategoryPanel({ category, env, onSet, onUnset }: CategoryPanelProps): R
       {open && (
         <div className="flex flex-col gap-2 border-t border-zinc-800 px-4 py-3">
           {category.vars.map((v) => (
-            <VarRow
-              key={v.key}
-              v={v}
-              currentValue={env[v.key]}
-              onSet={onSet}
-              onUnset={onUnset}
-            />
+            <VarRow key={v.key} v={v} currentValue={env[v.key]} onSet={onSet} onUnset={onUnset} />
           ))}
         </div>
       )}
@@ -323,7 +787,7 @@ export function EnvironmentSection(): React.JSX.Element {
   const parsed = useEditorStore((s) => s.parsed)
   const updateField = useEditorStore((s) => s.updateField)
   const removeField = useEditorStore((s) => s.removeField)
-  const env = useMemo(() => ((parsed.env ?? {}) as Record<string, string>), [parsed.env])
+  const env = useMemo(() => (parsed.env ?? {}) as Record<string, string>, [parsed.env])
 
   const customVars = useMemo(() => {
     const result: Record<string, string> = {}

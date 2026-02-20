@@ -17,12 +17,16 @@ export function registerIpcHandlers(): void {
     return fileService.write(filePath, content)
   })
 
-  ipcMain.handle('schema:get-settings', () => {
-    return schemaService.getSettingsSchema()
+  ipcMain.handle('schema:get-settings', (_event, version?: string) => {
+    return schemaService.getSettingsSchema(version)
   })
 
   ipcMain.handle('schema:get-mcp', () => {
     return schemaService.getMcpSchema()
+  })
+
+  ipcMain.handle('schema:get-deprecated', (_event, version?: string) => {
+    return schemaService.getDeprecatedFields(version)
   })
 
   ipcMain.handle('version:detect', () => {
